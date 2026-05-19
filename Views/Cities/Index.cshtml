@@ -1,0 +1,57 @@
+@model IEnumerable<TravelGuide.Models.City>
+@{
+    ViewData["Title"] = "Города России";
+}
+
+<h1 class="mb-4">Города России</h1>
+
+<form asp-action="Index" method="get" class="mb-4">
+    <div class="input-group" style="max-width:400px;">
+        <input type="text" name="search" value="@ViewBag.Search"
+               class="form-control" placeholder="Поиск по названию города..." />
+        <button type="submit" class="btn btn-primary">Найти</button>
+        @if (!string.IsNullOrWhiteSpace(ViewBag.Search as string))
+        {
+            <a asp-action="Index" class="btn btn-outline-secondary">Сбросить</a>
+        }
+    </div>
+</form>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Города по запросу «@ViewBag.Search» не найдены.</div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var city in Model)
+        {
+            <div class="col">
+                <a asp-action="Details" asp-route-id="@city.Id" class="text-decoration-none text-dark">
+                    <div class="card h-100 shadow-sm">
+                        <img src="@city.PhotoUrl" class="card-img-top city-img"
+                             alt="@city.Name"
+                             onerror="this.src='https://via.placeholder.com/400x200?text=@Uri.EscapeDataString(city.Name)'" />
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                @if (!string.IsNullOrEmpty(city.CoatOfArmsUrl))
+                                {
+                                    <img src="@city.CoatOfArmsUrl" class="coat-thumb"
+                                         alt="Герб @city.Name"
+                                         onerror="this.style.display='none'" />
+                                }
+                                <h5 class="card-title mb-0">@city.Name</h5>
+                            </div>
+                            <p class="text-muted small mb-1">📍 @city.Region</p>
+                            <p class="text-muted small mb-2">👥 @city.Population чел.</p>
+                            <p class="card-text small">@city.ShortDescription</p>
+                        </div>
+                        <div class="card-footer text-end">
+                            <small class="text-primary">Подробнее →</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+}

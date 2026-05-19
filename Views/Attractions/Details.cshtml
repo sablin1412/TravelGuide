@@ -1,0 +1,73 @@
+@model TravelGuide.Models.Attraction
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Cities" asp-action="Index">Города</a></li>
+        @if (Model.City != null)
+        {
+            <li class="breadcrumb-item">
+                <a asp-controller="Cities" asp-action="Details" asp-route-id="@Model.CityId">@Model.City.Name</a>
+            </li>
+        }
+        <li class="breadcrumb-item active">@Model.Name</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-8">
+        <h1 class="mb-3">@Model.Name</h1>
+
+        <img src="@Model.PhotoUrl" class="img-fluid rounded mb-4" alt="@Model.Name"
+             style="max-height:400px; width:100%; object-fit:cover;"
+             onerror="this.src='https://via.placeholder.com/800x400?text=@Uri.EscapeDataString(Model.Name)'" />
+
+        <h4>История и описание</h4>
+        <p>@Model.History</p>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <strong>Информация</strong>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <small class="text-muted d-block">Название</small>
+                    <strong>@Model.Name</strong>
+                </li>
+                @if (Model.City != null)
+                {
+                    <li class="list-group-item">
+                        <small class="text-muted d-block">Город</small>
+                        <strong>@Model.City.Name</strong>
+                    </li>
+                }
+                @if (!string.IsNullOrEmpty(Model.WorkingHours))
+                {
+                    <li class="list-group-item">
+                        <small class="text-muted d-block">🕐 Часы работы</small>
+                        <strong>@Model.WorkingHours</strong>
+                    </li>
+                }
+                @if (!string.IsNullOrEmpty(Model.TicketPrice))
+                {
+                    <li class="list-group-item">
+                        <small class="text-muted d-block">🎫 Стоимость посещения</small>
+                        <strong>@Model.TicketPrice</strong>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        @if (Model.City != null)
+        {
+            <a asp-controller="Cities" asp-action="Details" asp-route-id="@Model.CityId"
+               class="btn btn-outline-primary w-100 mt-3">
+                ← Все достопримечательности @Model.City.Name
+            </a>
+        }
+    </div>
+</div>

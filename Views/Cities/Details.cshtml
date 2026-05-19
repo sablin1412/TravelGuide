@@ -1,0 +1,104 @@
+@model TravelGuide.Models.City
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Cities" asp-action="Index">Города</a></li>
+        <li class="breadcrumb-item active">@Model.Name</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <!-- Основная информация -->
+    <div class="col-md-8">
+        <div class="d-flex align-items-center gap-3 mb-3">
+            @if (!string.IsNullOrEmpty(Model.CoatOfArmsUrl))
+            {
+                <img src="@Model.CoatOfArmsUrl" class="coat-big" alt="Герб @Model.Name"
+                     onerror="this.style.display='none'" />
+            }
+            <h1 class="mb-0">@Model.Name</h1>
+        </div>
+
+        <img src="@Model.PhotoUrl" class="img-fluid rounded mb-4" alt="@Model.Name"
+             style="max-height:350px; width:100%; object-fit:cover;"
+             onerror="this.src='https://via.placeholder.com/800x350?text=@Uri.EscapeDataString(Model.Name)'" />
+
+        <h4>История города</h4>
+        <p>@Model.History</p>
+
+        <hr />
+
+        <h4 class="mb-3">Достопримечательности</h4>
+        @if (!Model.Attractions.Any())
+        {
+            <p class="text-muted">Достопримечательности не добавлены.</p>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-md-2 g-3">
+                @foreach (var attr in Model.Attractions)
+                {
+                    <div class="col">
+                        <a asp-controller="Attractions" asp-action="Details" asp-route-id="@attr.Id"
+                           class="text-decoration-none text-dark">
+                            <div class="card h-100 shadow-sm">
+                                <img src="@attr.PhotoUrl" class="card-img-top attr-img" alt="@attr.Name"
+                                     onerror="this.src='https://via.placeholder.com/400x180?text=@Uri.EscapeDataString(attr.Name)'" />
+                                <div class="card-body">
+                                    <h6 class="card-title">@attr.Name</h6>
+                                    <p class="card-text small text-muted">
+                                        @(attr.History.Length > 100 ? attr.History[..100] + "..." : attr.History)
+                                    </p>
+                                    @if (!string.IsNullOrEmpty(attr.WorkingHours))
+                                    {
+                                        <small class="text-muted">🕐 @attr.WorkingHours</small>
+                                    }
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Боковая панель -->
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <strong>Информация о городе</strong>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <small class="text-muted d-block">Название</small>
+                    <strong>@Model.Name</strong>
+                </li>
+                <li class="list-group-item">
+                    <small class="text-muted d-block">Регион</small>
+                    <strong>@Model.Region</strong>
+                </li>
+                <li class="list-group-item">
+                    <small class="text-muted d-block">Население</small>
+                    <strong>@Model.Population чел.</strong>
+                </li>
+                <li class="list-group-item">
+                    <small class="text-muted d-block">Достопримечательностей</small>
+                    <strong>@Model.Attractions.Count</strong>
+                </li>
+            </ul>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.CoatOfArmsUrl))
+        {
+            <div class="card mt-3 shadow-sm text-center p-3">
+                <p class="mb-2"><strong>Герб города</strong></p>
+                <img src="@Model.CoatOfArmsUrl" alt="Герб @Model.Name"
+                     style="max-height:120px; object-fit:contain;"
+                     onerror="this.style.display='none'" />
+            </div>
+        }
+    </div>
+</div>
